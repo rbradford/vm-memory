@@ -620,6 +620,11 @@ impl<T: GuestMemory> Bytes<GuestAddress> for T {
     type E = Error;
 
     fn write(&self, buf: &[u8], addr: GuestAddress) -> Result<usize> {
+        eprintln!(
+            "MEMORY WRITE: address = 0x{:x} size = 0x{:x}",
+            addr.0,
+            buf.len()
+        );
         self.try_access(
             buf.len(),
             addr,
@@ -630,6 +635,11 @@ impl<T: GuestMemory> Bytes<GuestAddress> for T {
     }
 
     fn read(&self, buf: &mut [u8], addr: GuestAddress) -> Result<usize> {
+        eprintln!(
+            "MEMORY READ: address = 0x{:x} size = 0x{:x}",
+            addr.0,
+            buf.len()
+        );
         self.try_access(
             buf.len(),
             addr,
@@ -736,6 +746,10 @@ impl<T: GuestMemory> Bytes<GuestAddress> for T {
     where
         F: Read,
     {
+        eprintln!(
+            "MEMORY FILE READ: address = 0x{:x} size = 0x{:x}",
+            addr.0, count
+        );
         self.try_access(count, addr, |offset, len, caddr, region| -> Result<usize> {
             // Check if something bad happened before doing unsafe things.
             assert!(offset <= count);
@@ -802,6 +816,10 @@ impl<T: GuestMemory> Bytes<GuestAddress> for T {
     where
         F: Write,
     {
+        eprintln!(
+            "MEMORY FILE WRITE: address = 0x{:x} size = 0x{:x}",
+            addr.0, count
+        );
         self.try_access(count, addr, |offset, len, caddr, region| -> Result<usize> {
             // Check if something bad happened before doing unsafe things.
             assert!(offset <= count);
